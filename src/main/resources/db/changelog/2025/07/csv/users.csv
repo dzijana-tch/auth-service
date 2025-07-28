@@ -1,0 +1,4 @@
+user_id,username,password,email,first_name,last_name,role
+bc0f5c2c-ae61-4ad1-9046-84190c31d3bc,ivan_ivanov,{noop}my1secret!password,ivanov@mail.ru,Иван,Иванов,ROLE_USER
+bc5c49ab-d3ff-49c4-aed4-88e4ef23b606,sergey_adminov,{noop}$erega1997,serega97@mail.ru,Сергей,Админов,ROLE_ADMIN
+1f89d7c5-1367-43c3-a800-02e40ca19885,dziyanka,{noop}please_hire_me!,dzijana.tch@yandex.by,Диана,Чернюк,ROLE_USER

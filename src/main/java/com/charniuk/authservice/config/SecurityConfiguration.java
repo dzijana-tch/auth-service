@@ -4,16 +4,23 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 import com.charniuk.authservice.security.JwtAuthenticationFilter;
 import com.charniuk.authservice.service.UserService;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -39,7 +46,7 @@ public class SecurityConfiguration {
           return corsConfiguration;
         }))
         .authorizeHttpRequests(request -> request
-            .requestMatchers("/auth/**").permitAll()
+            .requestMatchers("/api/v1/auth/**").permitAll()
             .requestMatchers("/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**")
             .permitAll()
             .anyRequest().authenticated())
@@ -51,6 +58,48 @@ public class SecurityConfiguration {
 
   @Bean
   public AuthenticationProvider authenticationProvider() {
-    return new DaoAuthenticationProvider(userService.userDetailsService());
+    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(
+        userService.userDetailsService());
+    authProvider.setPasswordEncoder(passwordEncoder());
+    return authProvider;
+  }
+
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+      throws Exception {
+    return config.getAuthenticationManager();
+  }
+
+  private SecurityScheme createAPIKeyScheme() {
+    return new SecurityScheme().type(SecurityScheme.Type.HTTP)
+        .bearerFormat("JWT")
+        .scheme("bearer");
+  }
+
+  @Bean
+  public OpenAPI openAPI() {
+    return new OpenAPI()
+        .addSecurityItem(new SecurityRequirement()
+            .addList("Bearer Authentication"))
+        .components(new Components().addSecuritySchemes
+            ("Bearer Authentication", createAPIKeyScheme()));
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new PasswordEncoder() {
+      @Override
+      public String encode(CharSequence rawPassword) {
+        return "{noop}" + rawPassword;
+      }
+
+      @Override
+      public boolean matches(CharSequence rawPassword, String encodedPassword) {
+        String storedPassword = encodedPassword.startsWith("{noop}")
+            ? encodedPassword.substring(6)
+            : encodedPassword;
+        return rawPassword.toString().equals(storedPassword);
+      }
+    };
   }
 }

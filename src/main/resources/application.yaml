@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/auth_service_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+  liquibase:
+    enabled: true
+    change-log: classpath:changelog-master.yaml
+    drop-first: false
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+        ddl-auto: none
+        show-sql: true
+token:
+  signing:
+    key: baed04e5d92a1e44f91c5331bad158b6da8f4d3e9553c506f2f6eb5ff054c056

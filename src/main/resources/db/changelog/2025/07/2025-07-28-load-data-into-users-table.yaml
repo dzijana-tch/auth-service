@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: load-data-into-users-table
+      author: charniuk
+      changes:
+        - loadData:
+            tableName: users
+            encoding: UTF-8
+            separator: ','
+            file: db/changelog/2025/07/csv/users.csv

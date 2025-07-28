@@ -20,4 +20,16 @@ public interface UserService {
    */
   User getByUsername(String username);
 
+  /**
+   * Получение пользователя по email
+   *
+   * @return пользователь
+   */
+  User getByEmail(String email);
+
+  /**
+   * Создание пользователя
+   */
+  void create(User user);
+
 }
