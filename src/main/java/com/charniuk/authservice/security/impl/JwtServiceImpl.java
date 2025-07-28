@@ -13,12 +13,14 @@ import java.util.function.Function;
 import io.jsonwebtoken.Claims;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JwtServiceImpl implements JwtService {
 
   @Value("${token.signing.key}")
@@ -68,6 +70,7 @@ public class JwtServiceImpl implements JwtService {
 
   @Override
   public String generateToken(User user) {
+    log.info("Генерация токена для пользователя {}", user.getUserId());
     Map<String, Object> claims = new HashMap<>();
     claims.put("username", user.getUsername());
     claims.put("role", user.getRole());
@@ -90,6 +93,7 @@ public class JwtServiceImpl implements JwtService {
 
   @Override
   public boolean isTokenValid(String token, UserDetails userDetails) {
+    log.info("Проверка на валидность токена {}", token);
     final String username = extractUsername(token);
     return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
   }

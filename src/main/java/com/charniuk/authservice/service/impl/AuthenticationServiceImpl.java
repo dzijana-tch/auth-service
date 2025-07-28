@@ -9,15 +9,19 @@ import com.charniuk.authservice.model.User;
 import com.charniuk.authservice.security.JwtService;
 import com.charniuk.authservice.service.AuthenticationService;
 import com.charniuk.authservice.service.UserService;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
   private final AuthenticationManager authenticationManager;
@@ -28,6 +32,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   @Override
   @Transactional
   public JwtAuthenticationResponse signUp(SignUpRequest request) {
+
+    log.info("Регистрация нового пользователя");
 
     User user = User.builder()
         .username(request.getUsername())
@@ -48,6 +54,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   @Transactional
   public JwtAuthenticationResponse signInByEmail(SignInByEmailRequest request) {
 
+    log.info("Авторизация по email {}", request.getEmail());
+
     var user = userService
         .getByEmail(request.getEmail());
 
@@ -64,6 +72,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   @Transactional
   public JwtAuthenticationResponse signInByUsername(SignInByUsernameRequest request) {
 
+    log.info("Авторизация по username {}", request.getUsername());
+
     var user = userService
         .getByUsername(request.getUsername());
 
@@ -74,5 +84,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     var jwt = jwtService.generateToken(user);
     return new JwtAuthenticationResponse(jwt);
+  }
+
+  @Override
+  public boolean isCurrentUser(UUID userId) {
+
+    UUID currentUserId = currentUserId();
+    return userId.equals(currentUserId);
+  }
+
+  @Override
+  public UUID currentUserId() {
+
+    User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return currentUser.getUserId();
   }
 }

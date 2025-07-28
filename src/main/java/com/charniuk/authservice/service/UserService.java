@@ -1,6 +1,10 @@
 package com.charniuk.authservice.service;
 
+import com.charniuk.authservice.dto.request.UserUpdateRequest;
+import com.charniuk.authservice.dto.response.UserResponse;
 import com.charniuk.authservice.model.User;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService {
@@ -32,4 +36,29 @@ public interface UserService {
    */
   void create(User user);
 
+  /**
+   * Получение пользователя по айди
+   *
+   * @return dto пользователя
+   */
+  UserResponse getDtoByUserId(UUID userId);
+
+  /**
+   * Получение всех пользователей
+   *
+   * @return dto пользователей
+   */
+  List<UserResponse> getAllUserDto();
+
+  /**
+   * Обновление данных пользователя
+   *
+   * @return dto пользователя
+   */
+  UserResponse update(UUID userId, UserUpdateRequest userUpdateRequest);
+
+  /**
+   * Удаление пользователя
+   */
+  void delete(UUID userId);
 }
