@@ -11,7 +11,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
     networks:
-      - my_shared_network
+      - auth_notification_network
 
   auth-service:
     build: .
