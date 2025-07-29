@@ -1,5 +1,8 @@
 package com.charniuk.authservice.service.impl;
 
+import static com.charniuk.authservice.enums.Role.ROLE_ADMIN;
+import static com.charniuk.authservice.enums.UserAction.*;
+
 import com.charniuk.authservice.UserMapper;
 import com.charniuk.authservice.dto.request.UserUpdateRequest;
 import com.charniuk.authservice.dto.response.UserResponse;
@@ -7,6 +10,7 @@ import com.charniuk.authservice.exceptions.UserAlreadyExistsException;
 import com.charniuk.authservice.exceptions.UserNotFoundException;
 import com.charniuk.authservice.model.User;
 import com.charniuk.authservice.repository.UserRepository;
+import com.charniuk.authservice.service.NotificationService;
 import com.charniuk.authservice.service.UserService;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final UserMapper userMapper;
+  private final NotificationService notificationService;
 
   @Override
   public UserDetailsService userDetailsService() {
@@ -51,7 +56,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void create(User user) {
-    log.info("Создание пользователя. \nПроверка на существование пользователя с username {}",
+    log.info("Создание пользователя. Проверка на существование пользователя с username {}",
         user.getUsername());
     if (userRepository.existsByUsername(user.getUsername())) {
       throw new UserAlreadyExistsException(
@@ -64,6 +69,7 @@ public class UserServiceImpl implements UserService {
           "Пользователь с email " + user.getEmail() + " уже существует");
     }
     userRepository.save(user);
+    notificationService.notifyAdmins(CREATED, user, getAllAdminEmails());
   }
 
   @Override
@@ -93,7 +99,9 @@ public class UserServiceImpl implements UserService {
     User user = getByUserId(userId);
     userMapper.updateUserFromRequest(user, userUpdateRequest);
     log.info("Обновление информации о пользователе {}", user.getUserId());
-    return userMapper.toResponse(userRepository.save(user));
+    userRepository.save(user);
+    notificationService.notifyAdmins(UPDATED, user, getAllAdminEmails());
+    return userMapper.toResponse(user);
   }
 
   @Override
@@ -102,5 +110,16 @@ public class UserServiceImpl implements UserService {
     log.info("Удаление пользователя с userId {}", userId);
     User user = getByUserId(userId);
     userRepository.delete(user);
+    notificationService.notifyAdmins(DELETED, user, getAllAdminEmails());
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<String> getAllAdminEmails() {
+    return userRepository.findAll()
+        .stream()
+        .filter(e -> e.getRole().equals(ROLE_ADMIN))
+        .map(User::getEmail)
+        .toList();
   }
 }

@@ -61,4 +61,11 @@ public interface UserService {
    * Удаление пользователя
    */
   void delete(UUID userId);
+
+  /**
+   * Получение списка почтовых ящиков всех администраторов
+   *
+   * @return dto пользователя
+   */
+  List<String> getAllAdminEmails();
 }

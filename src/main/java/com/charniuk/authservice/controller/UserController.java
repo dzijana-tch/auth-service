@@ -173,10 +173,7 @@ public interface UserController {
       value = {
           @ApiResponse(
               responseCode = "200",
-              description = "OK",
-              content = @Content(
-                  mediaType = "application/json",
-                  schema = @Schema(implementation = UserResponse.class))),
+              description = "OK"),
           @ApiResponse(
               responseCode = "403",
               description = "Forbidden",

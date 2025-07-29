@@ -18,3 +18,6 @@ spring:
 token:
   signing:
     key: baed04e5d92a1e44f91c5331bad158b6da8f4d3e9553c506f2f6eb5ff054c056
+notification-service:
+  url: ${NOTIFICATION_SERVICE_URL:http://notification-service:8080}
+  api-key: maSZvyWhw43K0bx1DsOY4xKpWuJLgyvgSSwTMer8UbgfCWbBEseKLVumFktdE6NC

@@ -1,4 +1,5 @@
 user_id,username,password,email,first_name,last_name,role
 bc0f5c2c-ae61-4ad1-9046-84190c31d3bc,ivan_ivanov,{noop}my1secret!password,ivanov@mail.ru,Иван,Иванов,ROLE_USER
-bc5c49ab-d3ff-49c4-aed4-88e4ef23b606,sergey_adminov,{noop}$erega1997,serega97@mail.ru,Сергей,Админов,ROLE_ADMIN
-1f89d7c5-1367-43c3-a800-02e40ca19885,dziyanka,{noop}please_hire_me!,dzijana.tch@yandex.by,Диана,Чернюк,ROLE_USER
+bc5c49ab-d3ff-49c4-aed4-88e4ef23b606,sergey_sergeev,{noop}$erega1997,serega97777@mail.ru,Сергей,Сергеев,ROLE_USER
+1f89d7c5-1367-43c3-a800-02e40ca19885,diana_chernyuk,{noop}please_hire_me!,chernyuk.diana@gmail.com,Диана,Чернюк,ROLE_ADMIN
+7d17ace0-72fb-4f80-a580-5fbaed2563fa,anton_adminov,{noop}5?2£1K7YW2&y,dzijana.tch@yandex.by,Антон,Админов,ROLE_ADMIN
